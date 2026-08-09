@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>翻页电子相册</title>
-  <!-- 引入 StPageFlip 开源库 CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/page-flip@1.1.2/dist/page-flip.browser.min.js"></script>
+  <!-- 修正后的稳定CDN地址 -->
+  <script src="https://unpkg.com/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
   <style>
     * {
       margin: 0;
@@ -25,7 +25,6 @@
       font-weight: 500;
       font-size: 24px;
     }
-    /* 书本容器 */
     #book {
       width: 920px;
       height: 620px;
@@ -35,7 +34,6 @@
       border-radius: 4px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-    /* 单页样式 */
     .photo-page {
       width: 100%;
       height: 100%;
@@ -50,7 +48,6 @@
       max-height: 95%;
       object-fit: contain;
     }
-    /* 控制栏 */
     .control-bar {
       display: flex;
       align-items: center;
@@ -68,16 +65,11 @@
       color: #fff;
       font-size: 15px;
       cursor: pointer;
-      transition: background 0.2s;
-    }
-    .control-bar button:hover {
-      background: #2563eb;
     }
     .control-bar button:disabled {
       background: #64748b;
       cursor: not-allowed;
     }
-    /* 移动端适配 */
     @media (max-width: 768px) {
       #book {
         width: 100%;
@@ -97,8 +89,7 @@
   </div>
 
   <script>
-    // ===================== 配置区（修改这里即可） =====================
-    // 图片路径：将图片放入 images 文件夹，按顺序填写文件名
+    // ===================== 配置区 =====================
     const photoList = [
     "images/01.jpg",
     "images/02.jpg",
@@ -129,25 +120,22 @@
     "images/27.jpg",
     ];
 
-    // 翻页效果配置
     const flipConfig = {
-      width: 920,          // 书本宽度（px）
-      height: 620,         // 书本高度（px）
-      showCover: false,    // 是否显示单独封面（true=第一页为封面，单独显示）
-      clickEvent: true,    // 点击书页边缘翻页
-      mobileScrollSupport: true, // 移动端支持滑动翻页
-      swipeDistance: 30    // 滑动触发翻页的最小距离
+      width: 920,
+      height: 620,
+      showCover: false,
+      clickEvent: true,
+      mobileScrollSupport: true,
+      swipeDistance: 30
     };
-    // ================================================================
+    // =================================================
 
-    // 页面加载完成后初始化
     document.addEventListener("DOMContentLoaded", function () {
       const bookEl = document.getElementById("book");
       const prevBtn = document.getElementById("prevBtn");
       const nextBtn = document.getElementById("nextBtn");
       const pageNumEl = document.getElementById("pageNum");
 
-      // 动态生成所有书页
       photoList.forEach(function (imgSrc) {
         const pageDiv = document.createElement("div");
         pageDiv.className = "photo-page";
@@ -155,10 +143,8 @@
         bookEl.appendChild(pageDiv);
       });
 
-      // 初始化 StPageFlip 实例
       const pageFlip = new St.PageFlip(bookEl, flipConfig);
 
-      // 更新页码与按钮状态
       function updatePageState() {
         const currentIndex = pageFlip.getCurrentPageIndex();
         const totalPages = pageFlip.getPageCount();
@@ -167,7 +153,6 @@
         nextBtn.disabled = currentIndex >= totalPages - 1;
       }
 
-      // 按钮翻页
       prevBtn.addEventListener("click", function () {
         pageFlip.flipPrev();
       });
@@ -175,10 +160,7 @@
         pageFlip.flipNext();
       });
 
-      // 监听翻页结束事件，更新状态
       pageFlip.on("flip-end", updatePageState);
-
-      // 初始化状态
       updatePageState();
     });
   </script>
