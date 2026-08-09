@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>翻页电子相册</title>
-  <!-- 本地引入，彻底规避CDN拦截问题 -->
+  <!-- 本地引入 2.0.7 版本库文件 -->
   <script src="./page-flip.browser.js"></script>
   <style>
     * {
@@ -33,15 +33,6 @@
       background: #fff;
       border-radius: 4px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-    }
-    .photo-page {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff;
-      overflow: hidden;
     }
     .photo-page img {
       max-width: 95%;
@@ -136,15 +127,11 @@
       const nextBtn = document.getElementById("nextBtn");
       const pageNumEl = document.getElementById("pageNum");
 
-      photoList.forEach(function (imgSrc) {
-        const pageDiv = document.createElement("div");
-        pageDiv.className = "photo-page";
-        pageDiv.innerHTML = `<img src="${imgSrc}" alt="相册图片" loading="lazy">`;
-        bookEl.appendChild(pageDiv);
-      });
-
+      // 2.x 版本：先创建实例，再调用 loadFromImages 加载图片
       const pageFlip = new St.PageFlip(bookEl, flipConfig);
+      pageFlip.loadFromImages(photoList);
 
+      // 更新页码与按钮状态
       function updatePageState() {
         const currentIndex = pageFlip.getCurrentPageIndex();
         const totalPages = pageFlip.getPageCount();
@@ -153,6 +140,7 @@
         nextBtn.disabled = currentIndex >= totalPages - 1;
       }
 
+      // 按钮绑定
       prevBtn.addEventListener("click", function () {
         pageFlip.flipPrev();
       });
@@ -160,8 +148,9 @@
         pageFlip.flipNext();
       });
 
-      pageFlip.on("flip-end", updatePageState);
-      updatePageState();
+      // 2.x 版本：监听事件，初始化完成和翻页结束时更新状态
+      pageFlip.on("init", updatePageState);
+      pageFlip.on("flip", updatePageState);
     });
   </script>
 </body>
