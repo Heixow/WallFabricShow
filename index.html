@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>书本翻页电子相册</title>
+<!-- StPageFlip CDN -->
+<script src="https://cdn.jsdelivr.net/npm/page-flip@1.1.2/dist/page-flip.browser.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#222;
+  min-height:100vh;
+  padding:20px 10px;
+}
+h1{
+  color:#fff;
+  text-align:center;
+  margin-bottom:24px;
+  font-weight:normal;
+}
+/*书本容器*/
+#book{
+  width:100%;
+  max-width:920px;
+  height:620px;
+  margin:0 auto;
+}
+/*每一页样式*/
+.page-item{
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.page-item img{
+  max-width:96%;
+  max-height:96%;
+  object-fit:contain;
+}
+/*控制按钮*/
+.controls{
+  text-align:center;
+  margin-top:20px;
+}
+.controls button{
+  padding:10px 24px;
+  margin:0 8px;
+  border:none;
+  border-radius:6px;
+  background:#3b82f6;
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+}
+.controls button:disabled{
+  background:#64748b;
+  cursor:not-allowed;
+}
+</style>
+</head>
+<body>
+<h1>我的翻页相册</h1>
+<div id="book"></div>
+<div class="controls">
+  <button id="btnPrev">上一页</button>
+  <span style="color:#fff;margin:0 12px" id="pageText"></span>
+  <button id="btnNext">下一页</button>
+</div>
+
+<script>
+// ===================== 配置区 =====================
+// 把你的图片放到 images 文件夹，在这里填写图片路径
+const photoList = [
+  "images/01.jpg",
+  "images/02.jpg",
+  "images/03.jpg",
+  "images/04.jpg",
+  "images/05.jpg",
+];
+
+// StPageFlip配置
+const flipOptions = {
+  width: 920,
+  height: 620,
+  showCover: false,      // 是否显示封面
+  mobileScrollSupport:true,
+  swipeDistance:30,
+  clickEvent:true
+};
+// =================================================
+
+const bookEl = document.getElementById("book");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const pageText = document.getElementById("pageText");
+
+// 生成书页
+photoList.forEach(src=>{
+  const div = document.createElement("div");
+  div.className = "page-item";
+  div.innerHTML = `<img src="${src}" alt="相册图片">`;
+  bookEl.appendChild(div);
+})
+
+// 初始化翻页实例
+const pageFlip = new St.PageFlip(bookEl, flipOptions);
+
+// 更新页码、按钮状态
+function updateUI(){
+  const curr = pageFlip.getCurrentPageIndex();
+  const total = pageFlip.getPageCount();
+  pageText.innerText = `${curr+1} / ${total}`;
+  btnPrev.disabled = curr <= 0;
+  btnNext.disabled = curr >= total -1;
+}
+
+btnPrev.onclick = ()=>{
+  pageFlip.flipPrev();
+};
+btnNext.onclick = ()=>{
+  pageFlip.flipNext();
+};
+
+//翻页动画结束后更新UI
+pageFlip.on("flip-end", ()=>{
+  updateUI();
+});
+
+updateUI();
+</script>
+</body>
+</html>
